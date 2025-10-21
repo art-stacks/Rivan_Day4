@@ -598,6 +598,8 @@ class GeneratePlaybook:
                         'ip route 10.72.0.0 255.255.0.0 200.0.0.72 254',
                         'ip route 10.81.0.0 255.255.0.0 200.0.0.81 254',
                         'ip route 10.82.0.0 255.255.0.0 200.0.0.82 254',
+                        'ip route 10.91.0.0 255.255.0.0 200.0.0.91 254',
+                        'ip route 10.92.0.0 255.255.0.0 200.0.0.92 254',
                         f'ip route 10.{self.m}.0.0 255.255.0.0 10.{self.m}.{self.m}.4 253',
                         'end'
                     ]
@@ -611,7 +613,6 @@ class GeneratePlaybook:
                         'conf t',
                         'router ospf 1',
                         f'router-id {self.m}.0.0.1',
-                        'network 200.0.0.0 0.0.0.255 area 0',
                         f'network 10.{self.m}.{self.m}.0 0.0.0.255 area 0',
                         f'network {self.m}.0.0.1 0.0.0.0 area 0',
                         'int gi 0/0/0',
@@ -620,7 +621,142 @@ class GeneratePlaybook:
                     ]
                 },
                 'tags': ['ospf']
-            }
+            },
+            {
+                'name': 'Define INSIDE and OUTSIDE',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        'int g0/0/0',
+                        'ip nat inside',
+                        'int g0/0/1',
+                        'ip nat outside',
+                        'end'
+                    ]
+                },
+                'tags': ['innout']
+            },
+            {
+                'name': 'Create NAT Policy',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        'ip access-list extended NAT-POLICY',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.11.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.12.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.21.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.22.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.31.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.32.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.41.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.42.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.51.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.52.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.61.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.62.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.71.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.72.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.81.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.82.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.91.0.0 0.0.255.255',
+                        f'deny ip 10.{self.m}.0.0 0.0.255.255 10.92.0.0 0.0.255.255',
+                        f'no deny ip 10.{self.m}.0.0 0.0.255.255 10.{self.m}.0.0 0.0.255.255',
+                        'permit ip any any',
+                        'end'
+                    ]
+                },
+                'tags': ['nat0']
+            },
+            {
+                'name': 'Apply NAT',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        'ip nat inside source list NAT-POLICY int g0/0/1 overload',
+                        'ip route 0.0.0.0 0.0.0.0 200.0.0.1',
+                        'end'
+                    ]
+                },
+                'tags': ['applynat']
+            },
+            {
+                'name': 'Assign DNS',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        f'ip name-server 10.{self.m}.1.10',
+                        'ip domain lookup'
+                    ]
+                },
+                'tags': ['dns']
+            },
+            {
+                'name': 'Create mGRE TUNNEL',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        'int tun1',
+                        f'ip add 172.16.1.{self.m} 255.255.255.0',
+                        'tunnel source g0/0/1',
+                        'tunnel mode gre multipoint',
+                        'no shut',
+                        'tun key 123',
+                        'ip nhrp authentication C1sc0123',
+                        'ip nhrp map multicast dynamic',
+                        'ip nhrp network-id 1337',
+                        'ip nhrp map 172.16.1.11 200.0.0.11',
+                        'ip nhrp map 172.16.1.12 200.0.0.12',
+                        'ip nhrp map 172.16.1.21 200.0.0.21',
+                        'ip nhrp map 172.16.1.22 200.0.0.22',
+                        'ip nhrp map 172.16.1.31 200.0.0.31',
+                        'ip nhrp map 172.16.1.32 200.0.0.32',
+                        'ip nhrp map 172.16.1.41 200.0.0.41',
+                        'ip nhrp map 172.16.1.42 200.0.0.42',
+                        'ip nhrp map 172.16.1.51 200.0.0.51',
+                        'ip nhrp map 172.16.1.52 200.0.0.52',
+                        'ip nhrp map 172.16.1.61 200.0.0.61',
+                        'ip nhrp map 172.16.1.62 200.0.0.62',
+                        'ip nhrp map 172.16.1.71 200.0.0.71',
+                        'ip nhrp map 172.16.1.72 200.0.0.72',
+                        'ip nhrp map 172.16.1.81 200.0.0.81',
+                        'ip nhrp map 172.16.1.82 200.0.0.82',
+                        'ip nhrp map 172.16.1.91 200.0.0.91',
+                        'ip nhrp map 172.16.1.92 200.0.0.92',
+                        f'no ip nhrp map 172.16.1.{self.m} 200.0.0.{self.m}',
+                        'end'
+                    ]
+                },
+                'tags': ['mgre']
+            },
+            {
+                'name': 'Route Interesting Traffic',
+                'ios_command': {
+                    'commands': [
+                        'conf t',
+                        'ip route 10.11.0.0 255.255.0.0 172.16.1.11 252',
+                        'ip route 10.12.0.0 255.255.0.0 172.16.1.12 252',
+                        'ip route 10.21.0.0 255.255.0.0 172.16.1.21 252',
+                        'ip route 10.22.0.0 255.255.0.0 172.16.1.22 252',
+                        'ip route 10.31.0.0 255.255.0.0 172.16.1.31 252',
+                        'ip route 10.32.0.0 255.255.0.0 172.16.1.32 252',
+                        'ip route 10.41.0.0 255.255.0.0 172.16.1.41 252',
+                        'ip route 10.42.0.0 255.255.0.0 172.16.1.42 252',
+                        'ip route 10.51.0.0 255.255.0.0 172.16.1.51 252',
+                        'ip route 10.52.0.0 255.255.0.0 172.16.1.52 252',
+                        'ip route 10.61.0.0 255.255.0.0 172.16.1.61 252',
+                        'ip route 10.62.0.0 255.255.0.0 172.16.1.62 252',
+                        'ip route 10.71.0.0 255.255.0.0 172.16.1.71 252',
+                        'ip route 10.72.0.0 255.255.0.0 172.16.1.72 252',
+                        'ip route 10.81.0.0 255.255.0.0 172.16.1.81 252',
+                        'ip route 10.82.0.0 255.255.0.0 172.16.1.82 252',
+                        'ip route 10.91.0.0 255.255.0.0 172.16.1.91 252',
+                        'ip route 10.92.0.0 255.255.0.0 172.16.1.92 252',
+                        f'no ip route 10.{self.m}.0.0 255.255.0.0 172.16.1.{self.m} 252',
+                        'end'
+                    ]
+                },
+                'tags': ['mgre']
+            },
         ]
         
         with open('edge.yml', 'w') as file:
@@ -833,3 +969,4 @@ if __name__ == '__main__':
     
 
     GeneratePlaybook(**user_info)
+
