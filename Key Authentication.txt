@@ -1,4 +1,192 @@
 
+NetOps
+
+
+
+Why VPN?
+
+Telnet CoreTAAS
+| Auth      |           |
+| ---       | ---       |
+| Username: | Fav Food? |
+| Password: | Dinner?   |
+
+| Username: | College?  |
+| Password: | Course?   |
+
+| Username: | admin     |
+| Password: | pass      |
+
+
+## Authentication
+### RSA Key Pair
+
+~~~
+!@Cisco
+conf t
+ enable secret pass
+ username admin priv 15 secret pass
+ ip domain name net.sec
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+  exit
+ crypto key generate rsa modulus 2048 label key
+ ip ssh rsa keypair-name key
+ ip ssh version 2
+~~~
+
+
+!@NetOps
+ssh-keygen -t rsa -b 1024 -f rsa.key
+fold -w 46 rsa.key.pub
+
+or
+
+!@NetOps
+openssl genpkey -algorithm RSA -out rsa_priv.key -pkeyopt rsa_keygen_bits:1024
+openssl pkey -in rsa_priv.key -pubout -out rsa_pub.key
+
+
+Verify:
+
+!@cmd
+ssh -l root 10.m.1.6/24
+
+
+Where are the host private keys located on linux?
+!@NetOps
+cd /etc/ssh/
+
+
+Verify the fingerprint
+!@NetOps
+ssh-keygen -lf ssh_host_ed25519_key.pub
+
+
+
+Are the RSA keys used for payload encryption?
+
+
+## Key Exchange
+### Diffie-Hellman 
+
+~~~
+!@NetOps
+openssl dhparam -out dhgroup.pem 1024
+
+openssl genpkey -paramfile dhgroup.pem -out ph_priv.key
+openssl pkey -in ph_priv.key -pubout -out ph_pub.key
+
+openssl genpkey -paramfile dhgroup.pem -out jp_priv.key
+openssl pkey -in jp_priv.key -pubout -out jp_pub.key
+
+openssl pkeyutl -derive -inkey ph_priv.key -peerkey jp_pub.key -out ph-shared.secret
+openssl pkeyutl -derive -inkey jp_priv.key -peerkey ph_pub.key -out jp-shared.secret
+~~~
+
+View Private key contents
+!@NetOps
+openssl pkey -in rsa_priv.key -text -noout
+
+
+
+
+
+
+
+
+
+
+Integrity:
+
+!@cmd
+certutil -hashfile vmrest.cfg md5
+
+
+# VPN
+# Block Sites
+# Port Forwarding
+# Privilege Access Management
+
+
+
+
+# Login Auth Methods
+  - Basic
+  - Pub Key
+  - KRB
+
+
+Apply persistent IP address on linux
+~~~
+!@NetOps
+nmcli connection add \
+type ethernet \
+con-name TunayNaLAN \
+if-name ens192 \
+ipv4.method manual \
+ipv4.addresses 10.#$34T#.1.6/24 \
+autoconnect yes
+
+nmcli connection up TunayNaLAN
+~~~
+
+
+
+
+Encryption types
+- Symmetrical
+  Shared Key/Session Key
+  
+- Asymmetrical
+  Key Pair
+  - Private Key
+  - Public Key
+
+SSH - Server key is used only to verify authenticity.
+RSA - Generate Key Pair
+AES - Encrypts data in Session
+SHA - Hash data for authenticity, hashes encrypted data
+DH-GROUP - Establish shared secret (a lot of math)
+
+HMAC-SHA256 - authenticity and identity of payload, use shared session key to be added to message
+Signature - Encrypts Hash of the message using Ephemeral Priv Key
+Fingerprint - Hash of the shared secret/public key, separate from the message.
+
+2048 key size = secure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Setup WinServer 2022, DNS, and WebServer
   - Turn off the firewall
   - Change the computer name
