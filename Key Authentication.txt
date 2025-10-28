@@ -135,7 +135,7 @@ adduser admin
 
 
 
-## Authentication
+## Cryptography 
 ### RSA Key Pair
 
 !@NetOps
@@ -150,29 +150,28 @@ openssl pkey -in rsa_priv.key -pubout -out rsa_pub.key
 
 
 Verify:
-
 !@cmd
 ssh -l root 10.m.1.6/24
 
+### FINGERPRINT
+The authenticity of host '10.91.1.6 (10.91.1.6)' can't be established.
+ED25519 key fingerprint is SHA256:K1lJBH2lpRJ3UkDLhvobaAwCMwPaCcQuWB5bIb8heBg.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
 
 Where are the host private keys located on linux?
 !@NetOps
 cd /etc/ssh/
 
-
 Verify the fingerprint
 !@NetOps
 ssh-keygen -lf ssh_host_ed25519_key.pub
-
-
 
 Are the RSA keys used for payload encryption?
 
 
 ## Key Exchange
 ### Diffie-Hellman 
-
-~~~
 !@NetOps
 openssl dhparam -out dhgroup.pem 1024
 
@@ -180,15 +179,73 @@ openssl genpkey -paramfile dhgroup.pem -out ph_priv.key
 openssl pkey -in ph_priv.key -pubout -out ph_pub.key
 
 openssl genpkey -paramfile dhgroup.pem -out jp_priv.key
-openssl pkey -in jp_priv.key -pubout -out jp_pub.key
+openssl pkey -in jp_priv.key -pubout -out jp_pub.keyip.dst == 208.8.8.12
 
 openssl pkeyutl -derive -inkey ph_priv.key -peerkey jp_pub.key -out ph-shared.secret
 openssl pkeyutl -derive -inkey jp_priv.key -peerkey ph_pub.key -out jp-shared.secret
-~~~
 
 View Private key contents
 !@NetOps
 openssl pkey -in rsa_priv.key -text -noout
+
+
+
+******
+Encryption types
+- Asymmetrical
+  Key Pair
+  - Private Key
+  - Public Key
+
+- Symmetrical
+  Shared Key/Session Key
+
+SSH - Server key is used only to verify authenticity.
+RSA - Generate Key Pair
+
+### SHA - Hash data for authenticity, hashes encrypted data
+!@NetOps
+echo my_gcash_info > data.txt
+sha256sum data.txt
+
+
+### AES - Encrypts data in Session
+!@NetOps
+openssl enc -aes-256-cbc -in data.txt -out data.enc
+
+Salted - add bits of info to the encryption to prevent reverse eng
+Make sure to produce different output per encryption.
+
+
+### DH-GROUP - Establish parameters for ephemeral keys to keep key exchange secure. Shared secret (a lot of math)
+!@NetOps
+openssl dhparam -out dhgroup.pem 1024
+
+
+### HMAC-SHA256 - authenticity and identity of payload, use the hash of the shared session key to be added to the unencrypted message, then together both are hashed.
+!@NetOps
+sha256sum ph-shared.secret
+nano pre.hmac
+///
+hash + unencrypted data
+8e8b5b383ab2fac1a686b84a3decae33422d719d6b42648c92192fa3030ee3d6 my_gcash_info
+///
+openssl enc -aes-256-cbc -in pre.hmac -out hmac
+
+
+### Signature - Encrypts Hash of the message using Ephemeral Priv Key/longterm private key
+!@NetOps
+sha256sum data.txt > hash.file
+openssl pkeyutl -encrypt -inkey ph_priv.key -in hash.file -out Signature
+
+
+### Fingerprint - Hash of the shared secret/public key, separate from the message.
+!@NetOps
+sha256sum rsa_pub.key
+
+
+2048 key size = secure
+******
 
 
 
@@ -236,26 +293,7 @@ nmcli connection up TunayNaLAN
 
 
 
-Encryption types
-- Symmetrical
-  Shared Key/Session Key
-  
-- Asymmetrical
-  Key Pair
-  - Private Key
-  - Public Key
 
-SSH - Server key is used only to verify authenticity.
-RSA - Generate Key Pair
-AES - Encrypts data in Session
-SHA - Hash data for authenticity, hashes encrypted data
-DH-GROUP - Establish shared secret (a lot of math)
-
-HMAC-SHA256 - authenticity and identity of payload, use shared session key to be added to message
-Signature - Encrypts Hash of the message using Ephemeral Priv Key
-Fingerprint - Hash of the shared secret/public key, separate from the message.
-
-2048 key size = secure
 
 
 
