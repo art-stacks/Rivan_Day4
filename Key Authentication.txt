@@ -269,16 +269,15 @@ sha256sum rsa_pub.key
 
 
 
-
-
-
 # Modify Open Ports
-
-
+!@NetOps
+cd 
+cat motd_commands.txt
 
 
 
 # Port Forwarding
+
 # Privilege Access Management
 
 
