@@ -1,5 +1,7 @@
 
-NetOps
+Deploy: NetOps & CSR1000v
+MGMT Int: Gig1
+MGMT IP: 208.8.8.11/24
 
 
 
