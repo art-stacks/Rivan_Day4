@@ -34,6 +34,10 @@
             "ip http server",
             "ip http secure-server",
             "ip http authentication local",
+            "service finger",
+            "service tcp-small-servers",
+            "service udp-small-servers",
+            "ip dns server",
             "end",
             "wr"
         ]
@@ -75,8 +79,13 @@
             "ip http server",
             "ip http secure-server",
             "ip http authentication local",
+            "service finger",
+            "service tcp-small-servers",
+            "service udp-small-servers",
+            "ip dns server",
             "end",
             "wr"
         ]
     }
+
 }
