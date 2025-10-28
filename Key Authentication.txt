@@ -62,8 +62,22 @@ conf t
 
 Why VPN?
 
-
 Deploy: NetOps & CSR1000v
+
+Apply persistent IP address on linux
+~~~
+!@NetOps
+nmcli connection add \
+type ethernet \
+con-name TunayNaLAN \
+if-name ens192 \
+ipv4.method manual \
+ipv4.addresses 10.#$34T#.1.6/24 \
+autoconnect yes
+
+nmcli connection up TunayNaLAN
+~~~
+
 
 CSR1000v - VPN-PH
 Login Username: admin
@@ -208,6 +222,9 @@ RSA - Generate Key Pair
 echo my_gcash_info > data.txt
 sha256sum data.txt
 
+!@cmd
+certutil -hashfile data.txt md5
+
 
 ### AES - Encrypts data in Session
 !@NetOps
@@ -255,15 +272,12 @@ sha256sum rsa_pub.key
 
 
 
-
-Integrity:
-
-!@cmd
-certutil -hashfile vmrest.cfg md5
+# Modify Open Ports
 
 
-# VPN
-# Block Sites
+
+
+
 # Port Forwarding
 # Privilege Access Management
 
@@ -276,19 +290,7 @@ certutil -hashfile vmrest.cfg md5
   - KRB
 
 
-Apply persistent IP address on linux
-~~~
-!@NetOps
-nmcli connection add \
-type ethernet \
-con-name TunayNaLAN \
-if-name ens192 \
-ipv4.method manual \
-ipv4.addresses 10.#$34T#.1.6/24 \
-autoconnect yes
 
-nmcli connection up TunayNaLAN
-~~~
 
 
 
