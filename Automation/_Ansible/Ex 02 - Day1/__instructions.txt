@@ -229,7 +229,7 @@ ip route add 200.0.0.0/24 via 10.#$34T#.1.4 dev ens192
 @NetOps
 sudo nmcli connection add \
 type ethernet con-name "TunayNaLAN" \
-ifname ens256 \
+ifname ens192 \
 ipv4.method manual \
 ipv4.address 10.92.1.6/24 \
 autoconnect yes
@@ -279,6 +279,7 @@ Make sure pings are SUCCESS
 @NetOps
 
 ansible-playbook run_all.yml
+
 
 
 
