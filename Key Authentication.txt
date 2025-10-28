@@ -1,13 +1,27 @@
 
-Deploy: NetOps & CSR1000v
-MGMT Int: Gig1
-MGMT IP: 208.8.8.11/24
+<!-- Your Monitor Number == #$34T# -->
+
+~~~
+!@Cisco
+conf t
+ enable secret pass
+ username admin priv 15 secret pass
+ ip domain name net.sec
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+  end
+~~~
 
 
+Why you should not use unsecure protocols?
+- Telnet
+- HTTP
+- FTP
+- SIP
 
-Why VPN?
-
-Telnet CoreTAAS
 | Auth      |           |
 | ---       | ---       |
 | Username: | Fav Food? |
@@ -19,10 +33,11 @@ Telnet CoreTAAS
 | Username: | admin     |
 | Password: | pass      |
 
+!@cmd
+ping 10.#$34T#.1.2
 
-## Authentication
-### RSA Key Pair
 
+Use a secure protocol, SSH
 ~~~
 !@Cisco
 conf t
@@ -40,6 +55,88 @@ conf t
  ip ssh version 2
 ~~~
 
+
+
+
+
+
+Why VPN?
+
+
+Deploy: NetOps & CSR1000v
+
+CSR1000v - VPN-PH
+Login Username: admin
+Login Password: pass
+MGMT Int: Gig2
+MGMT IP: 192.168.102.11/24
+Features:
+ - Enable SSH & Telnet
+
+CSR1000v - VPN-JP
+Login Username: admin
+Login Password: pass
+MGMT Int: Gig2
+MGMT IP: 192.168.102.12/24
+Features:
+ - Enable SSH & Telnet
+
+<br>
+
+### Execute the Python Script from S2S VPN
+
+!@BLDG-PH
+sudo su
+ifconfig eth0 11.11.11.100 netmask 255.255.255.224 up
+route add default gw 11.11.11.113
+ping 11.11.11.113
+
+!@BLDG-JP-1
+sudo su
+ifconfig eth0 21.21.21.211 netmask 255.255.255.240 up
+route add default gw 21.21.21.213
+ping 21.21.21.213
+
+!@BLDG-JP-2
+sudo su
+ifconfig eth0 22.22.22.221 netmask 255.255.255.192 up
+route add default gw 22.22.22.223
+ping 22.22.22.223
+
+
+
+### Add User Accounts
+!@All BLDG
+sudo su
+adduser admin
+
+> New Password:    pass
+> Retype Password: pass
+
+
+
+| VPN-PH |     VARS       | BLDG-JP  |
+| ---    | ---            | ---      |
+|        | Authenticate   |          | 
+|        |                |          |
+|        | PHASE 1        |          |
+|        | Encryption     |          |
+|        | Integrity      |          |
+|        | Group          |          |
+|        |                |          |
+|        | PHASE 2        |          |
+|        | ESP-Encryption |          |
+|        | ESP-Hash       |          |
+|        | Tunnel IP      |          |
+|        | Tunnel Mask    |          |
+|        | Source Int     |          |
+|        | Peer IP        |          |
+|        | Remote Subnets |          |
+
+
+
+## Authentication
+### RSA Key Pair
 
 !@NetOps
 ssh-keygen -t rsa -b 1024 -f rsa.key
