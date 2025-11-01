@@ -1,4 +1,3 @@
-
 def get_devices():
     prompt = input('Which Monitors to be configured? ex. 11,12,21')
     active_pc = prompt.split(',')
@@ -90,7 +89,21 @@ if __name__ == '__main__':
 
     if not add_dn:
         add_dn = ''
-
-    device_list = get_devices()    
+    
+    process_list = []
+    device_list = get_devices()
+    
+    ### Use multiprocessing to configure multiple devices at the same time
     for m in device_list:
-      config_devices(m, add_dn)
+      proc = multiprocessing.Process(target=config_devices, args=[m, add_dn])
+      process_list.append(proc)
+    
+    ### run the function for each process
+    for i in process_list:
+        i.start()
+    
+    ### wait for all the process to finish before moving on to the next line
+    for i in process_list:
+        i.join()
+    
+    print('Configuration Complete')
