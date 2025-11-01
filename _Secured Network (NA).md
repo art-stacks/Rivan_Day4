@@ -103,7 +103,6 @@ Task 3.
 	Configure static routes.  
 	- Configure a static host route on R1 destined for R3's LOOPBACK 
 	using R3 as the next hop.
-	
 	- Configure a floating static route on R1 destined for R3's LOOPBACK 
 	using R2 as the next hop with an Administrative Distance equal 
 	to EXTERNAL EIGRP.
@@ -301,8 +300,8 @@ conf t
 ### Configuration and Infrastructure Management Tools. (Ansible, Terraform, Puppet, & Chef)
 *From Shell Scripting to Automation management tools.*
 
-Shell scripting
-Output Hello
+__Shell scripting__  
+1. Output a basic Hello
 ~~~
 @linux
 nano hello.sh
@@ -315,8 +314,9 @@ chmod 500 hello.sh
 ./hello.sh
 ~~~
 
+<br>
 
-Create Multi users
+2. Create Multi users
 ~~~
 @linux
 nano add_user.sh
@@ -336,27 +336,26 @@ chmod 500 add_user.sh
 ./add_user.sh
 ~~~
 
+&nbsp;
+---
+&nbsp;
 
+### Agentless vs Agentbased
+Puppet - Master (8143) & Agent (8142)  
+Chef - Server (10000 & 10002) & Client  
 
+<br>
 
+### Programming Language
+Ansible - Python  
+Chef & Puppet(.pp) - Ruby, DSL (Domain-specific Language)  
+Terraform(.tf) - HCL (Hashicorp Configuration Language)  
 
-Agentless vs Agentbased
-
-Puppet - Master (8143) & Agent (8142)
-Chef - Server (10000 & 10002) & Client
-
-
-Programming Language
-
-Ansible - Python
-Chef & Puppet(.pp) - Ruby, DSL (Domain-specific Language)
-Terraform(.tf) - HCL (Hashicorp Configuration Language)
-
-
-Configuration Files
+<br>
 
 ### Ansible
-# Playbook (any.yml)
+__Playbook (any.yml)__
+~~~
 ---
 - name: addloop
   hosts: realdevices
@@ -377,8 +376,12 @@ Configuration Files
           - ip add 102.102.102.102 255.255.255.255
       vars:
         ansible_network_os: ios
+~~~
 
-# hosts (Inventory)
+<br>
+
+__hosts (Inventory)__
+~~~
 [CoreBaba]
 10.11.1.4
 
@@ -387,12 +390,17 @@ ansible_user=admin
 ansible_password=C1sc0123
 ansible_connection=network_cli
 ansible_network_os=ios
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### CHEF
-# Cookbook
-# Recipe (default.rb file)
+__Cookbook__  
+__Recipe (default.rb file)__
 
+~~~
 cisco_ios_config 'set_hostname_and_ssh' do
   config_lines [
     "hostname #{node['cisco_ios_config']['hostname']}",
@@ -405,18 +413,25 @@ cisco_ios_config 'set_hostname_and_ssh' do
   ]
   action :apply
 end
+~~~
 
-# Credentials
+<br>
 
+__Credentials__
+~~~
 ['CoreBaba']
 Host = '192.168.240.2'
 User = 'admin'
 Password = 'password'
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### PUPPET
-# Manifest (.pp Pocket Physics file)
-
+__Manifest (.pp Pocket Physics file)__
+~~~
 node 'cisco.example.com' {
   cisco_ios_interface { 'GigabitEthernet0/1':
     ensure => present,
@@ -425,24 +440,34 @@ node 'cisco.example.com' {
     duplex => 'auto',
     vlan_access => '10',
 }
+~~~
 
-# Device.conf (Inventory)
+<br>
 
+__Device.conf (Inventory)__
+~~~
 [rivan.com]
 type cisco_ios_interfaceurl file:////etc/puppetlabs/puppet/devices/rivan.com.conf
+~~~
 
-# Credentials
+<br>
 
+__Credentials__
+~~~
 host: "10.#$34T#.1.4"
 port: 22
 user: admin
 password: password
 enable_password: password
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### TERRAFORM
-# HCL (.tf File)
-
+__HCL (.tf File)__
+~~~
 terraform {
   required_providers {
     iosxe = {
@@ -464,13 +489,15 @@ resource "iosxe_interface_loopback" "example" {
   ipv4_address       = "2.2.2.2"
   ipv4_address_mask  = "255.255.255.255"
 }
+~~~
 
+<br>
+<br>
 
-"Get used to reading documentations"
+---
+&nbsp;
 
-
-
-Exercise 01: Write Scripts to add loopbacks via Python, Ansible, Terraform
+### Exercise 01: Write Scripts to add loopbacks via Python, Ansible, Terraform
 
 Tip - Open "Auto AddLoop" folder
 
@@ -1784,6 +1811,7 @@ conf t
  no ip ssh server algorithm authentication password
  no ip ssh server algorithm authentication keyboard
  end
+
 
 
 
