@@ -1,5 +1,5 @@
 def get_devices():
-    prompt = input('Which Monitors to be configured? ex. 11,12,21')
+    prompt = input('Which Monitors to be configured? [ex. 11,12,21]: ')
     active_pc = prompt.split(',')
     
     return active_pc
@@ -107,3 +107,4 @@ if __name__ == '__main__':
         i.join()
     
     print('Configuration Complete')
+
