@@ -11,7 +11,7 @@ device_info = {
     'username': 'admin',
     'password': 'pass',
     'secret': 'pass',
-    'port': 2262
+    'port': 23
 }
 
 for host in list_of_device:
