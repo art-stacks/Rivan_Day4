@@ -1,0 +1,34 @@
+# HESNO
+hostname: EDGE-{{ pc_num }}
+password: pass
+secret: pass
+
+# INTERFACES
+interfaces:
+  - name: 'Loopback0'
+    desc: 'VIRTUAL'
+    ip: '{{ pc_num }}.0.0.1'
+    mask: '255.255.255.255'
+  - name: 'GigabitEthernet0/0/0'
+    desc: 'INSIDE'
+    ip: '10.{{ pc_num }}.{{ pc_num }}.1'
+    mask: '255.255.255.0'
+  - name: 'GigabitEthernet0/0/1'
+    desc: 'OUTSIDE'
+    ip: '200.0.0.{{ pc_num }}'
+    mask: '255.255.255.0'
+
+# OSPF
+ospf:
+  - id: '1'
+    router_id: '{{ pc_num }}.0.0.1'
+    networks:
+      - network: '{{ pc_num }}.0.0.1'
+        wild_mask: '0.0.0.0'
+        area: '0'
+      - network: '200.0.0.{{ pc_num }}'
+        wild_mask: '0.0.0.255'
+        area: '0'
+      - network: '10.{{ pc_num }}.{{ pc_num }}.1'
+        wild_mask: '0.0.0.255'
+        area: '0'
