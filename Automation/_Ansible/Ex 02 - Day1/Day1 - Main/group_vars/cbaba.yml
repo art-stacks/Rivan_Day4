@@ -29,18 +29,12 @@ interfaces:
 
 # VLAN
 vlans:
-  - id: '1'
-    name: MGMTVLAN
-    desc: Management
   - id: '10'
     name: WIFIVLAN
-    desc: Wireless
   - id: '50'
     name: CCTVVLAN
-    desc: Cameras
   - id: '100'
     name: VOICEVLAN
-    desc: Telephony
 
 # DHCP
 dhcp_pool:
@@ -134,4 +128,5 @@ ospf:
     networks:
       - network: '10.{{ pc_num }}.0.0'
         wild_mask: '0.0.255.255'
+
         area: '0'
