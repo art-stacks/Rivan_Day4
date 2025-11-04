@@ -1,11 +1,8 @@
 - name: Deploy CoreTAAS
   hosts: ctaas_52
   gather_facts: False
-  include_vars: '../group_vars/day1_devices.yml'
 
   tasks:
-    - name: Initialization
-      include_vars: '../host_vars/ctaas_52.yml'
     - include_tasks: '../playbooks/deploy_ctaas.yml'
 
 - name: Deploy CoreBABA
@@ -13,8 +10,6 @@
   gather_facts: False
 
   tasks:
-    - name: Initialization
-      include_vars: '../host_vars/cbaba_52.yml'
     - include_tasks: '../playbooks/deploy_cbaba.yml'
 
 - name: Deploy CUCM
@@ -22,8 +17,6 @@
   gather_facts: False
 
   tasks:
-    - name: Initialization
-      include_vars: '../host_vars/cucm_52.yml'
     - include_tasks: '../playbooks/deploy_cucm.yml'
 
 - name: Deploy EDGE
@@ -31,6 +24,4 @@
   gather_facts: False
 
   tasks:
-    - name: Initialization
-      include_vars: '../host_vars/edge_52.yml'
     - include_tasks: '../playbooks/deploy_edge.yml'
