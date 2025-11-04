@@ -24,16 +24,11 @@ interfaces:
 
 # VLAN
 vlans:
-  - id: '1'
-    name: MGMTVLAN
-    desc: Management
   - id: '10'
     name: WIFIVLAN
-    desc: Wireless
   - id: '50'
     name: CCTVVLAN
-    desc: Cameras
   - id: '100'
     name: VOICEVLAN
-    desc: Telephony
+
 
