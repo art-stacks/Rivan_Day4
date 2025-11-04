@@ -1,7 +1,3 @@
-- name: Initialize Group Variables
-  tags: init
-  include_vars: '../group_vars/cbaba.yml'
-
 - name: Configuring Host Settings
   tags: host
   cisco.ios.ios_config:
@@ -35,4 +31,5 @@
 - name: Configuring OSPF
   tags: ospf
   cisco.ios.ios_config:
+
     src: '../templates/ospf.j2'
