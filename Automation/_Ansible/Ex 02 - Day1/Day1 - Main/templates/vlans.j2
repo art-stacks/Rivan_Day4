@@ -1,0 +1,10 @@
+{% for intlist in vlans %}
+vlan {{ intlist.id }}
+{% if intlist.name is defined and intlist.name %}
+  name {{ intlist.name }}
+{% endif %}
+{% if intlist.desc is defined and intlist.desc %}
+  desc {{ intlist.desc }}
+{% endif %}
+  exit
+{% endfor %}

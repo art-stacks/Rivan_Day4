@@ -1,0 +1,9 @@
+{% for intlist in switchports %}
+interface {{ intlist.interface }}
+  switchport mode {{ intlist.mode }}
+  switchport access vlan {{ intlist.access_vlan }}
+{% if intlist.voice_vlan is defined and intlist.voice_vlan %}
+  switchport voice vlan {{ intlist.voice_vlan }}
+  mls qos trust device cisco-phone
+{% endif %}
+{% endfor %}

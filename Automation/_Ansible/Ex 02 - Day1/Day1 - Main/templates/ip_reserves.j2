@@ -1,0 +1,5 @@
+{% for client in dhcp_reserve %}
+ip dhcp pool {{ client.name }}
+  host {{ client.ip }} {{ client.mask }}
+  client-identifier {{ client.mac }}
+{% endfor %}

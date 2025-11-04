@@ -1,0 +1,7 @@
+{% for ephone in video_conf %}
+ephone {{ ephone.id }}
+  video
+  voice service voip
+  {{ ephone.codec }}
+  call start slow
+{% endfor %}

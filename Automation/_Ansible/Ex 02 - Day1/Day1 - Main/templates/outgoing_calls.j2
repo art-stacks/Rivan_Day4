@@ -1,0 +1,6 @@
+{% for entry in outgoing_calls %}
+dial-peer voice {{ entry.id }} Voip
+  destination-pattern {{ entry.destination_pattern }}
+  session target ipv4:{{ entry.target }}
+  codec {{ entry.codec }}
+{% endfor %}
