@@ -193,7 +193,7 @@ openssl genpkey -paramfile dhgroup.pem -out ph_priv.key
 openssl pkey -in ph_priv.key -pubout -out ph_pub.key
 
 openssl genpkey -paramfile dhgroup.pem -out jp_priv.key
-openssl pkey -in jp_priv.key -pubout -out jp_pub.keyip.dst == 208.8.8.12
+openssl pkey -in jp_priv.key -pubout -out jp_pub.key
 
 openssl pkeyutl -derive -inkey ph_priv.key -peerkey jp_pub.key -out ph-shared.secret
 openssl pkeyutl -derive -inkey jp_priv.key -peerkey ph_pub.key -out jp-shared.secret
