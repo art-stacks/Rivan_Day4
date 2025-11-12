@@ -1,0 +1,78 @@
+Policy Based Firewall
+
+!@FW
+conf t
+ip access-list extended ALLOW-SERVICE_acl
+ 10 permit ip any any
+ip access-list extended INSIDE-TO-OUTSIDE
+ 10 permit ip any any
+ip access-list extended OUTSIDE-TO-INSIDE
+ 10 deny   ip any any
+ip access-list extended ZERO-TRUST_acl
+ 10 permit ip any any
+!
+ip access-list standard 1
+ 10 permit any
+
+class-map type inspect match-all ALLOW-SERVICE
+  description ALLOW-SERVICE
+  match access-group name ALLOW-SERVICE_acl
+class-map type inspect match-any CM-IN-TO-OUT
+  match access-group name INSIDE-TO-OUTSIDE
+class-map type inspect match-any CM-OUT-TO-IN
+  match access-group name OUTSIDE-TO-INSIDE
+class-map type inspect match-all ZERO-TRUST
+  description ZERO-TRUST
+  match access-group name ZERO-TRUST_acl
+!
+policy-map type inspect INSIDE-OUTSIDE-POLICY
+ class type inspect ALLOW-SERVICE
+  inspect
+ class class-default
+  drop log
+policy-map type inspect OUTSIDE-INSIDE-POLICY
+ class type inspect ZERO-TRUST
+  drop
+ class class-default
+  drop log
+!
+zone security OUTSIDE
+ description OUTSIDE
+zone security INSIDE
+ description INSIDE
+zone security DMZ
+ description DMZ
+zone-pair security INSIDE-OUTSIDE source INSIDE destination OUTSIDE
+ service-policy type inspect INSIDE-OUTSIDE-POLICY
+zone-pair security OUTSIDE-INSIDE source OUTSIDE destination INSIDE
+ service-policy type inspect OUTSIDE-INSIDE-POLICY
+ 
+interface GigabitEthernet1
+ zone-member security OUTSIDE
+!
+interface GigabitEthernet2
+ zone-member security DMZ
+!
+interface GigabitEthernet3
+ zone-member security INSIDE
+ 
+ 
+=========================================================
+Setup:
+
+FIREWALL
+CSR1000V
+ 
+Create Zones 
+- INSIDE
+- OUTSIDE
+- DMZ
+ 
+Create a Policy for OUTSIDE-INSIDE : zero-trust deny any any
+
+ALLOW-SERVICE INSIDE - OUTSIDE : INSPECT
+ZERO-TRUST OUTSIDE - INSIDE : DROP
+ 
+ In a Cisco zone-based firewall, inspect is stateful, allowing return traffic automatically by creating a connection state entry, 
+ 
+ while pass is stateless and allows traffic in only one direction, requiring a separate policy for the return flow.
