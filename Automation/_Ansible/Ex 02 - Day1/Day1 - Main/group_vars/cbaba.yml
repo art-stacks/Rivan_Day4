@@ -1,0 +1,132 @@
+# HESNO
+hostname: CoreBABA-{{ pc_num }}
+password: pass
+secret: pass
+
+# INTERFACES
+interfaces:
+  - name: 'vlan 1'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.1.4'
+    mask: '255.255.255.0'
+  - name: 'vlan 10'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.10.4'
+    mask: '255.255.255.0'
+  - name: 'vlan 50'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.50.4'
+    mask: '255.255.255.0'
+  - name: 'vlan 100'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.100.4'
+    mask: '255.255.255.0'
+  - name: 'GigabitEthernet0/1'
+    desc: 'GATEWAY'
+    ip: '10.{{ pc_num }}.{{ pc_num }}.4'
+    mask: '255.255.255.0'
+    no_switchport: True
+
+# VLAN
+vlans:
+  - id: '10'
+    name: WIFIVLAN
+  - id: '50'
+    name: CCTVVLAN
+  - id: '100'
+    name: VOICEVLAN
+
+# DHCP
+dhcp_pool:
+  - pool_name: MGMTPOOL
+    network: '10.{{ pc_num }}.1.0'
+    mask: '255.255.255.0'
+    gateway: '10.{{ pc_num }}.1.4'
+    domain_name: MANAGEMENT.COM
+    dns_server: '10.{{ pc_num }}.1.10'
+    exclude:
+      first_ip: '10.{{ pc_num }}.1.1'
+      last_ip: '10.{{ pc_num }}.1.100'
+  
+  - pool_name: WIFIPOOL
+    network: '10.{{ pc_num }}.10.0'
+    mask: '255.255.255.0'
+    gateway: '10.{{ pc_num }}.10.4'
+    domain_name: WIRELESS.COM
+    dns_server: '10.{{ pc_num }}.1.10'
+    exclude:
+      first_ip: '10.{{ pc_num }}.10.1'
+      last_ip: '10.{{ pc_num }}.10.100'
+    options:
+      - option_id: '43'
+        option_value: 'ip 10.{{ pc_num }}.1.6'
+  
+  - pool_name: CCTVPOOL
+    network: '10.{{ pc_num }}.50.0'
+    mask: '255.255.255.0'
+    gateway: '10.{{ pc_num }}.50.4'
+    domain_name: CCTV.COM
+    dns_server: '10.{{ pc_num }}.1.10'
+    exclude:
+      first_ip: '10.{{ pc_num }}.50.1'
+      last_ip: '10.{{ pc_num }}.50.100'
+
+  - pool_name: VOICEPOOL
+    network: '10.{{ pc_num }}.100.0'
+    mask: '255.255.255.0'
+    gateway: '10.{{ pc_num }}.100.4'
+    domain_name: VOIP.COM
+    dns_server: '10.{{ pc_num }}.1.10'
+    exclude:
+      first_ip: '10.{{ pc_num }}.100.1'
+      last_ip: '10.{{ pc_num }}.100.100'
+    options:
+      - option_id: '150'
+        option_value: 'ip 10.{{ pc_num }}.100.8'
+
+# SWITCHPORT
+switchports:
+  - interface: fa0/2
+    mode: access
+    access_vlan: '10'
+  - interface: fa0/4
+    mode: access
+    access_vlan: '10'
+  - interface: fa0/6
+    mode: access
+    access_vlan: '50'
+  - interface: fa0/8
+    mode: access
+    access_vlan: '50'
+  - interface: fa0/3
+    mode: access
+    access_vlan: '100'
+  - interface: fa0/5
+    mode: access
+    access_vlan: '1'
+    voice_vlan: '100'
+  - interface: fa0/7
+    mode: access
+    access_vlan: '1'
+    voice_vlan: '100'
+
+# IP RESERVATION
+dhcp_reserve:
+  - name: CAMERA6
+    ip: '10.{{ pc_num }}.50.6'
+    mask: '255.255.255.0'
+    mac: '{{ camera6_mac }}'
+  - name: CAMERA8
+    ip: '10.{{ pc_num }}.50.8'
+    mask: '255.255.255.0'
+    mac: '{{ camera8_mac }}'
+
+# ROUTING
+ospf:
+  - id: '1'
+    router_id: '10.{{ pc_num }}.{{ pc_num }}.4'
+    networks:
+      - network: '10.{{ pc_num }}.0.0'
+        wild_mask: '0.0.255.255'
+
+        area: '0'

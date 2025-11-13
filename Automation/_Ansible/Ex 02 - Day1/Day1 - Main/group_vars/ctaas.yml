@@ -1,0 +1,34 @@
+# HESNO
+hostname: CoreTAAS-{{ pc_num }}
+password: pass
+secret: pass
+
+# INTERFACES
+interfaces:
+  - name: 'vlan 1'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.1.2'
+    mask: '255.255.255.0'
+  - name: 'vlan 10'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.10.2'
+    mask: '255.255.255.0'
+  - name: 'vlan 50'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.50.2'
+    mask: '255.255.255.0'
+  - name: 'vlan 100'
+    desc: 'MGMTVLAN'
+    ip: '10.{{ pc_num }}.100.2'
+    mask: '255.255.255.0'
+
+# VLAN
+vlans:
+  - id: '10'
+    name: WIFIVLAN
+  - id: '50'
+    name: CCTVVLAN
+  - id: '100'
+    name: VOICEVLAN
+
+

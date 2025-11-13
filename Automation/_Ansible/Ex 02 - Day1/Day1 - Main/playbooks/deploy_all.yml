@@ -1,0 +1,31 @@
+- name: Deploy CoreTAAS
+  hosts: ctaas
+  gather_facts: False
+
+  tasks:
+    - name: Initialization
+      include_tasks: '../playbooks/deploy_ctaas.yml'
+
+- name: Deploy CoreBABA
+  hosts: cbaba
+  gather_facts: False
+
+  tasks:
+    - name: Initialization
+      include_tasks: '../playbooks/deploy_cbaba.yml'
+
+- name: Deploy CUCM
+  hosts: cucm
+  gather_facts: False
+
+  tasks:
+    - name: Initialization
+      include_tasks: '../playbooks/deploy_cucm.yml'
+
+- name: Deploy EDGE
+  hosts: edge
+  gather_facts: False
+
+  tasks:
+    - name: Initialization
+      include_tasks: '../playbooks/deploy_edge.yml'

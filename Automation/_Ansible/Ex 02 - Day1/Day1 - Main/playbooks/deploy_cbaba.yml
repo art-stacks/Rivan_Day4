@@ -1,0 +1,35 @@
+- name: Configuring Host Settings
+  tags: host
+  cisco.ios.ios_config:
+    src: '../templates/hesno.j2'
+
+- name: Configuring Interfaces
+  tags: int
+  cisco.ios.ios_config:
+    src: '../templates/interfaces.j2'
+
+- name: Configuring VLANs
+  tags: vlan
+  cisco.ios.ios_config:
+    src: '../templates/vlans.j2'
+
+- name: Configuring DHCP
+  tags: dhcp
+  cisco.ios.ios_config:
+    src: '../templates/dhcp.j2'
+
+- name: Configuring Switchports
+  tags: switchport
+  cisco.ios.ios_config:
+    src: '../templates/switchports.j2'
+
+- name: Configuring IP Reservations
+  tags: reserve
+  cisco.ios.ios_config:
+    src: '../templates/ip_reserves.j2'
+
+- name: Configuring OSPF
+  tags: ospf
+  cisco.ios.ios_config:
+
+    src: '../templates/ospf.j2'

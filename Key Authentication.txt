@@ -1,4 +1,330 @@
 
+<!-- Your Monitor Number == #$34T# -->
+
+~~~
+!@Cisco
+conf t
+ enable secret pass
+ username admin priv 15 secret pass
+ ip domain name net.sec
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+  end
+~~~
+
+
+Why you should not use unsecure protocols?
+- Telnet
+- HTTP
+- FTP
+- SIP
+
+| Auth      |           |
+| ---       | ---       |
+| Username: | Fav Food? |
+| Password: | Dinner?   |
+
+| Username: | College?  |
+| Password: | Course?   |
+
+| Username: | admin     |
+| Password: | pass      |
+
+!@cmd
+ping 10.#$34T#.1.2
+
+
+Use a secure protocol, SSH
+~~~
+!@Cisco
+conf t
+ enable secret pass
+ username admin priv 15 secret pass
+ ip domain name net.sec
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+  exit
+ crypto key generate rsa modulus 2048 label key
+ ip ssh rsa keypair-name key
+ ip ssh version 2
+~~~
+
+
+
+
+
+
+Why VPN?
+
+Deploy: NetOps & CSR1000v
+
+Apply persistent IP address on linux
+~~~
+!@NetOps
+nmcli connection add \
+type ethernet \
+con-name TunayNaLAN \
+if-name ens192 \
+ipv4.method manual \
+ipv4.addresses 10.#$34T#.1.6/24 \
+autoconnect yes
+
+nmcli connection up TunayNaLAN
+~~~
+
+
+CSR1000v - VPN-PH
+Login Username: admin
+Login Password: pass
+MGMT Int: Gig2
+MGMT IP: 192.168.102.11/24
+Features:
+ - Enable SSH & Telnet
+
+CSR1000v - VPN-JP
+Login Username: admin
+Login Password: pass
+MGMT Int: Gig2
+MGMT IP: 192.168.102.12/24
+Features:
+ - Enable SSH & Telnet
+
+<br>
+
+### Execute the Python Script from S2S VPN
+
+!@BLDG-PH
+sudo su
+ifconfig eth0 11.11.11.100 netmask 255.255.255.224 up
+route add default gw 11.11.11.113
+ping 11.11.11.113
+
+!@BLDG-JP-1
+sudo su
+ifconfig eth0 21.21.21.211 netmask 255.255.255.240 up
+route add default gw 21.21.21.213
+ping 21.21.21.213
+
+!@BLDG-JP-2
+sudo su
+ifconfig eth0 22.22.22.221 netmask 255.255.255.192 up
+route add default gw 22.22.22.223
+ping 22.22.22.223
+
+
+
+### Add User Accounts
+!@All BLDG
+sudo su
+adduser admin
+
+> New Password:    pass
+> Retype Password: pass
+
+
+
+| VPN-PH |     VARS       | BLDG-JP  |
+| ---    | ---            | ---      |
+|        | Authenticate   |          | 
+|        |                |          |
+|        | PHASE 1        |          |
+|        | Encryption     |          |
+|        | Integrity      |          |
+|        | Group          |          |
+|        |                |          |
+|        | PHASE 2        |          |
+|        | ESP-Encryption |          |
+|        | ESP-Hash       |          |
+|        | Tunnel IP      |          |
+|        | Tunnel Mask    |          |
+|        | Source Int     |          |
+|        | Peer IP        |          |
+|        | Remote Subnets |          |
+
+
+
+## Cryptography 
+### RSA Key Pair
+
+!@NetOps
+ssh-keygen -t rsa -b 1024 -f rsa.key
+fold -w 46 rsa.key.pub
+
+or
+
+!@NetOps
+openssl genpkey -algorithm RSA -out rsa_priv.key -pkeyopt rsa_keygen_bits:1024
+openssl pkey -in rsa_priv.key -pubout -out rsa_pub.key
+
+
+Verify:
+!@cmd
+ssh -l root 10.m.1.6/24
+
+### FINGERPRINT
+The authenticity of host '10.91.1.6 (10.91.1.6)' can't be established.
+ED25519 key fingerprint is SHA256:K1lJBH2lpRJ3UkDLhvobaAwCMwPaCcQuWB5bIb8heBg.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+
+Where are the host private keys located on linux?
+!@NetOps
+cd /etc/ssh/
+
+Verify the fingerprint
+!@NetOps
+ssh-keygen -lf ssh_host_ed25519_key.pub
+
+Are the RSA keys used for payload encryption?
+
+
+## Key Exchange
+### Diffie-Hellman 
+!@NetOps
+openssl dhparam -out dhgroup.pem 1024
+
+openssl genpkey -paramfile dhgroup.pem -out ph_priv.key
+openssl pkey -in ph_priv.key -pubout -out ph_pub.key
+
+openssl genpkey -paramfile dhgroup.pem -out jp_priv.key
+openssl pkey -in jp_priv.key -pubout -out jp_pub.key
+
+openssl pkeyutl -derive -inkey ph_priv.key -peerkey jp_pub.key -out ph-shared.secret
+openssl pkeyutl -derive -inkey jp_priv.key -peerkey ph_pub.key -out jp-shared.secret
+
+View Private key contents
+!@NetOps
+openssl pkey -in rsa_priv.key -text -noout
+
+
+
+******
+Encryption types
+- Asymmetrical
+  Key Pair
+  - Private Key
+  - Public Key
+
+- Symmetrical
+  Shared Key/Session Key
+
+SSH - Server key is used only to verify authenticity.
+RSA - Generate Key Pair
+
+### SHA - Hash data for authenticity, hashes encrypted data
+!@NetOps
+echo my_gcash_info > data.txt
+sha256sum data.txt
+
+!@cmd
+certutil -hashfile data.txt md5
+
+
+### AES - Encrypts data in Session
+!@NetOps
+openssl enc -aes-256-cbc -in data.txt -out data.enc
+
+Salted - add bits of info to the encryption to prevent reverse eng
+Make sure to produce different output per encryption.
+
+
+### DH-GROUP - Establish parameters for ephemeral keys to keep key exchange secure. Shared secret (a lot of math)
+!@NetOps
+openssl dhparam -out dhgroup.pem 1024
+
+
+### HMAC-SHA256 - authenticity and identity of payload, use the hash of the shared session key to be added to the unencrypted message, then together both are hashed.
+!@NetOps
+sha256sum ph-shared.secret
+nano pre.hmac
+///
+hash + unencrypted data
+8e8b5b383ab2fac1a686b84a3decae33422d719d6b42648c92192fa3030ee3d6 my_gcash_info
+///
+openssl enc -aes-256-cbc -in pre.hmac -out hmac
+
+
+### Signature - Encrypts Hash of the message using Ephemeral Priv Key/longterm private key
+!@NetOps
+sha256sum data.txt > hash.file
+openssl pkeyutl -encrypt -inkey ph_priv.key -in hash.file -out Signature
+
+
+### Fingerprint - Hash of the shared secret/public key, separate from the message.
+!@NetOps
+sha256sum rsa_pub.key
+
+
+2048 key size = secure
+******
+
+
+
+
+
+
+# Modify Open Ports
+!@NetOps
+cd 
+cat motd_commands.txt
+
+
+
+# Port Forwarding
+
+# Privilege Access Management
+
+
+
+
+# Login Auth Methods
+  - Basic
+  - Pub Key
+  - KRB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Setup WinServer 2022, DNS, and WebServer
   - Turn off the firewall
   - Change the computer name

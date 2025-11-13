@@ -1,0 +1,91 @@
+{
+    "VPN_PH": {
+        "device_info": {
+            "device_type": "cisco_ios",
+            "host": "10.255.10.254",
+            "username": "admin",
+            "password": "pass",
+            "secret": "pass",
+            "port": 22
+        },
+
+        "configs": [
+            "hostname VPN-PH",
+            "enable secret pass",
+            "service password-encryption",
+            "no logging cons",
+            "line vty 0 14",
+            "transport input all",
+            "password pass",
+            "login local",
+            "exec-timeout 0 0",
+            "int g1",
+            "ip add 208.8.8.11 255.255.255.0",
+            "no shut",
+            "int g2",
+            "ip add 10.255.10.254 255.255.255.0",
+            "no shut",
+            "int g3",
+            "ip add 10.11.11.113 255.255.255.224",
+            "no shut",
+            "ip route 0.0.0.0 0.0.0.0 208.8.8.2",
+            "ip name-server 8.8.8.8 1.1.1.1",
+            "username admin privilege 15 secret pass",
+            "ip http server",
+            "ip http secure-server",
+            "ip http authentication local",
+            "service finger",
+            "service tcp-small-servers",
+            "service udp-small-servers",
+            "ip dns server",
+            "end",
+            "wr"
+        ]
+    },
+
+    "VPN_JP": {
+        "device_info": {
+            "device_type": "cisco_ios",
+            "host": "10.69.255.6",
+            "username": "admin",
+            "password": "pass",
+            "secret": "pass",
+            "port": 22
+        },
+
+        "configs": [
+            "hostname VPN-JP",
+            "enable secret pass",
+            "service password-encryption",
+            "no logging cons",
+            "line vty 0 14",
+            "transport input all",
+            "password pass",
+            "login local",
+            "exec-timeout 0 0",
+            "int g1",
+            "ip add 208.8.8.12 255.255.255.0",
+            "no shut",
+            "int g2",
+            "ip add 10.69.255.6 255.255.255.248",
+            "no shut",
+            "int g3",
+            "ip add 10.21.21.213 255.255.255.240",
+            "no shut",
+            "ip route 0.0.0.0 0.0.0.0 208.8.8.2",
+            "ip name-server 8.8.8.8 1.1.1.1",
+            "username admin privilege 15 secret pass",
+            "ip http server",
+            "ip http secure-server",
+            "ip http authentication local",
+            "service finger",
+            "service tcp-small-servers",
+            "service udp-small-servers",
+            "ip dns server",
+            "end",
+            "wr"
+        ]
+    }
+
+}
+

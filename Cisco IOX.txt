@@ -1,0 +1,179 @@
+DEVOPS = Day 4
+**************
+
+### BOOTSTRAP
+Provide Internet for IOX Guestshell Containers
+
+!@CSR1Kv
+conf t
+ ip domain lookup
+ username admin priv 15 secret pass
+ enable secret pass
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+ !
+ int g1
+  ip add 208.8.8.11 255.255.255.0
+  ip nat outside
+  no shut
+  desc OUTSIDE-INET
+ int g2
+  ip add 192.168.102.11 255.255.255.0
+  ip nat inside
+  no shut
+  desc INSIDE-MGMT
+ int g3
+  ip add 192.168.103.11 255.255.255.0
+  ip nat inside
+  no shut
+  desc INSIDE
+ !
+ ip route 0.0.0.0 0.0.0.0 208.8.8.2
+ ip name-server 8.8.8.8 1.1.1.1
+ !
+ access-list 1 permit any
+ ip nat inside source list 1 int g1 overload
+ end
+  
+  
+### ENABLE CISCO IOX
+Create a Virtual Port Group for IOX Container Network
+
+> [!NOTE]
+> app-vnic gateway0 is used by most apps.
+> Make sure appid is lowercase.
+
+
+!@CSR1k
+conf t
+ iox
+ !
+ interface VirtualPortGroup0
+  ip address 192.168.255.1 255.255.255.0
+  ip nat inside
+  exit
+ !
+ app-hosting appid guestshell
+  app-vnic gateway0 virtualportgroup 0 guest-interface 0
+   guest-ipaddress 192.168.255.11 netmask 255.255.255.0	
+  app-default-gateway 192.168.255.1 guest-interface 0 
+  name-server0 8.8.8.8
+  app-resource profile custom
+   cpu 1500 
+   memory 512
+   persistent-disk 1000
+   end
+
+
+### ENABLE APP INSTANCE
+
+!@CSR1Kv
+guestshell enable
+
+After the app is enabled:
+
+!@CSR1Kv
+guestshell run bash
+guestshell run python3
+
+
+### MANAGE LINUX
+> [!IMPORTANT]
+> Update the repo stream link
+
+!@CSR1Kv - bash shell
+sudo su
+cd /etc/yum.repos.d/
+sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+yum repolist
+yum install epel-release -y
+yum install nano -y
+
+
+Install Applications
+!@CSR1Kv - bash shell
+yum install nmap -y
+yum install bind bind-utils -y
+yum install python3 -y
+yum install python38 -y
+yum install git -y
+yum install net-tools
+yum install NetworkManager
+
+Install Python Libraries
+python3 -m pip install --upgrade pip
+python3 -m pip install cryptography
+python3 -m pip install netmiko
+python3 -m pip install "netmiko<4.0"
+
+
+### CREATE PYTHON SCRIPT IN LINUX
+
+!@CSR1Kv - bash shell
+nano /home/guestshell/add_loop.py
+
+import netmiko 
+from netmiko import ConnectHandler
+
+device_info = {
+  'device_type': 'cisco_ios_telnet',
+  'host': '192.168.255.1',
+  'username': 'admin',
+  'password': 'pass',
+  'secret': 'pass'
+}
+
+configs = [
+  'int lo1',
+  'ip add 1.1.1.1. 255.255.255.255',
+  'end'
+]
+
+access_cli = ConnectHandler(**device_info)
+access_cli.enable()
+access_cli.send_config_set(configs)
+access_cli.disconnect()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+> [!OPTIONAL]
+> Config only when necessary
+
+Create a user account with sudo privileges
+!@CSR1Kv - bash shell
+adduser -G wheel admin
+passwd admin
+!@CSR1Kv - bash shell
+su admin
+sudo yum update --nobest --allowerasing -y
+
+
+TSHOOT Python3
+!@CSR1Kv - bash shell
+pip3 install bcrypt~=3.2.2
+
+!@CSR1Kv - bash shell
+yum install -y gcc rust cargo python3-devel openssl-devel libffi-devel
+python3 -m pip install setuptools_rust

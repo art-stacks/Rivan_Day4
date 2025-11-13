@@ -1,24 +1,26 @@
 
-Your Monitor Number = #$34T#
-__________
-**********
-00. Warm up for Day 4
+<!-- Your monitor number = #$34T# -->
 
-1. Setup your Day 1 BUT DO NOT configure any device.
 
-__________
-**********
-01. Warm Up Exercises:
+## ⛅ Warm Up for Day 4.
 
-QnA 01. Which two encoding methods are supported by REST APIs? (Choose Two)
+### Setup your Day 1 BUT DO NOT configure any device.
+
+<br>
+
+## 🎯 Review
+### 1. Which two encoding methods are supported by REST APIs? (Choose Two)
 	A. SGML
 	B. YAML
 	C. XML
 	D. JSON
 	E. EBCDIC
 
-QnA 02. Which output displays a JSON data representation?
+<br>
+
+### 2. Which output displays a JSON data representation?
 A.
+~~~
 	{
 	  "response":{
 	  "taskld":{};
@@ -26,8 +28,12 @@ A.
 	  };
 	  "version": "string"
 	}
+~~~
+
+<br>
 
 B.
+~~~
 	{
 	  "response"-{
 	  "taskld"-{},
@@ -35,8 +41,12 @@ B.
 	  },
 	  "version"- "string"
 	}
+~~~
+
+<br>
 
 C.
+~~~
 	{
 	  "response":{
 	  "taskld":{},
@@ -44,8 +54,12 @@ C.
 	  },
 	  "version": "string"
 	}
+~~~
+
+<br>
 
 D.
+~~~
 	{
 	  "response",{
 	  "taskld",{};
@@ -54,23 +68,28 @@ D.
 	  "version", "string"
 
 	}
+~~~
 
+&nbsp;
+---
+&nbsp;
 
-Ex 01. OSPF Configuration
+### 3. OSPF Configuration
+Refer to the Topology.   
+All routers are configured with IP addressing EXCEPT for the link between R1 & R3.  
+Finish the configuration by completing the ff:  
 
-Refer to the Topology.
- 
-All routers are configured with IP addressing EXCEPT for the 
-link between R1 & R3. 
-Finish the configuration by completing the ff:
+<br>
 
-Task 1. 
-	Using the 172.16.160.0/21 network, 
+Task 1.  
+	Using the 172.16.160.0/21 network,   
 	- assign the 1st VALID ip address on R1's e0/1 interface.
 	- assign the Last VALID ip address on R3's e0/1 interface.
 
-Task 2.
-	Configure single area OSPF on all routers with the ff:
+<br>
+
+Task 2.  
+	Configure single area OSPF on all routers with the ff:  
 	- All routers belong to AREA 2
 	- Use OSPF Process 5
 	- Assign each router's LOOPBACK 0 as their router ID.
@@ -78,21 +97,22 @@ Task 2.
 	- R1 must have the lowest priority on its e0/0 & e0/1 interfaces.
 	- Advertise all Connected routes.
 
-Task 3.
-	Configure static routes.
+<br>
+
+Task 3.  
+	Configure static routes.  
 	- Configure a static host route on R1 destined for R3's LOOPBACK 
 	using R3 as the next hop.
-	
 	- Configure a floating static route on R1 destined for R3's LOOPBACK 
 	using R2 as the next hop with an Administrative Distance equal 
 	to EXTERNAL EIGRP.
 
+<br>
+<br>
 
-
-ANSWER HERE
-
-Task 1.
-
+ANSWER HERE  
+Task 1.  
+~~~
 @R1
 conf t
  interface ___
@@ -106,10 +126,12 @@ conf t
   ip add ___.___.___.___  ___.___.___.___
   no shut
   end
+~~~
 
+<br>
 
 Task 2.
-
+~~~
 @R1
 conf t
  interface ___
@@ -146,50 +168,58 @@ conf t
   network ___.___.___.___  ___.___.___.___ area ___
   network ___.___.___.___  ___.___.___.___ area ___
   end
-  
-  
-Task 3.
+~~~  
 
+<br>
+
+Task 3.
+~~~
 @R1
 conf t
  ip route 192.168.5.33 255.255.255.___  ___.___.___.___
  ip route 192.168.5.33 255.255.255.___  ___.___.___.___  ___
  end
+~~~
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+<details>
+<summary>Show Answer</summary>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-ANSWERS:
-
-Task 1.
-
+ANSWERS:  
+Task 1.  
+~~~
 @R1
 conf t
  interface e0/1
@@ -203,10 +233,12 @@ conf t
   ip add 172.16.167.254 255.255.248.0
   no shut
   end
+~~~
 
+<br>
 
 Task 2.
-
+~~~
 @R1
 conf t
  interface e0/0
@@ -243,26 +275,33 @@ conf t
   network 192.168.0.152 0.0.0.3 area 2
   network 172.16.160.0 0.0.7.255 area 2
   end
+~~~
 
+<br>
 
 Task 3.
-
+~~~
 @R1
 conf t
  ip route 192.168.5.33 255.255.255.255 172.16.167.254
  ip route 192.168.5.33 255.255.255.255 10.0.15.90 170
  end
+~~~
 
+</details>
 
+<br>
+<br>
 
+---
+&nbsp;
 
-__________
-**********
-02. Configuration and Infrastructure Management Tools. (Ansible, Terraform, Puppet, & Chef)
+## AUTOMATION
+### Configuration and Infrastructure Management Tools. (Ansible, Terraform, Puppet, & Chef)
 *From Shell Scripting to Automation management tools.*
 
-Shell scripting
-Output Hello
+__Shell scripting__  
+1. Output a basic Hello
 ~~~
 @linux
 nano hello.sh
@@ -275,8 +314,9 @@ chmod 500 hello.sh
 ./hello.sh
 ~~~
 
+<br>
 
-Create Multi users
+2. Create Multi users
 ~~~
 @linux
 nano add_user.sh
@@ -296,27 +336,26 @@ chmod 500 add_user.sh
 ./add_user.sh
 ~~~
 
+&nbsp;
+---
+&nbsp;
 
+### Agentless vs Agentbased
+Puppet - Master (8143) & Agent (8142)  
+Chef - Server (10000 & 10002) & Client  
 
+<br>
 
+### Programming Language
+Ansible - Python  
+Chef & Puppet(.pp) - Ruby, DSL (Domain-specific Language)  
+Terraform(.tf) - HCL (Hashicorp Configuration Language)  
 
-Agentless vs Agentbased
-
-Puppet - Master (8143) & Agent (8142)
-Chef - Server (10000 & 10002) & Client
-
-
-Programming Language
-
-Ansible - Python
-Chef & Puppet(.pp) - Ruby, DSL (Domain-specific Language)
-Terraform(.tf) - HCL (Hashicorp Configuration Language)
-
-
-Configuration Files
+<br>
 
 ### Ansible
-# Playbook (any.yml)
+__Playbook (any.yml)__
+~~~
 ---
 - name: addloop
   hosts: realdevices
@@ -337,8 +376,12 @@ Configuration Files
           - ip add 102.102.102.102 255.255.255.255
       vars:
         ansible_network_os: ios
+~~~
 
-# hosts (Inventory)
+<br>
+
+__hosts (Inventory)__
+~~~
 [CoreBaba]
 10.11.1.4
 
@@ -347,12 +390,17 @@ ansible_user=admin
 ansible_password=C1sc0123
 ansible_connection=network_cli
 ansible_network_os=ios
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### CHEF
-# Cookbook
-# Recipe (default.rb file)
+__Cookbook__  
+__Recipe (default.rb file)__
 
+~~~
 cisco_ios_config 'set_hostname_and_ssh' do
   config_lines [
     "hostname #{node['cisco_ios_config']['hostname']}",
@@ -365,18 +413,25 @@ cisco_ios_config 'set_hostname_and_ssh' do
   ]
   action :apply
 end
+~~~
 
-# Credentials
+<br>
 
+__Credentials__
+~~~
 ['CoreBaba']
 Host = '192.168.240.2'
 User = 'admin'
 Password = 'password'
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### PUPPET
-# Manifest (.pp Pocket Physics file)
-
+__Manifest (.pp Pocket Physics file)__
+~~~
 node 'cisco.example.com' {
   cisco_ios_interface { 'GigabitEthernet0/1':
     ensure => present,
@@ -385,24 +440,34 @@ node 'cisco.example.com' {
     duplex => 'auto',
     vlan_access => '10',
 }
+~~~
 
-# Device.conf (Inventory)
+<br>
 
+__Device.conf (Inventory)__
+~~~
 [rivan.com]
 type cisco_ios_interfaceurl file:////etc/puppetlabs/puppet/devices/rivan.com.conf
+~~~
 
-# Credentials
+<br>
 
+__Credentials__
+~~~
 host: "10.#$34T#.1.4"
 port: 22
 user: admin
 password: password
 enable_password: password
+~~~
 
+&nbsp;
+---
+&nbsp;
 
 ### TERRAFORM
-# HCL (.tf File)
-
+__HCL (.tf File)__
+~~~
 terraform {
   required_providers {
     iosxe = {
@@ -424,13 +489,15 @@ resource "iosxe_interface_loopback" "example" {
   ipv4_address       = "2.2.2.2"
   ipv4_address_mask  = "255.255.255.255"
 }
+~~~
 
+<br>
+<br>
 
-"Get used to reading documentations"
+---
+&nbsp;
 
-
-
-Exercise 01: Write Scripts to add loopbacks via Python, Ansible, Terraform
+### Exercise 01: Write Scripts to add loopbacks via Python, Ansible, Terraform
 
 Tip - Open "Auto AddLoop" folder
 
@@ -1744,5 +1811,7 @@ conf t
  no ip ssh server algorithm authentication password
  no ip ssh server algorithm authentication keyboard
  end
+
+
 
 

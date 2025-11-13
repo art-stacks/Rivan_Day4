@@ -1,0 +1,11 @@
+{% for intlist in interfaces %}
+interface {{ intlist.name }}
+{% if intlist.no_switchport is defined and intlist.no_switchport %}
+  no switchport
+{% endif%}
+{% if intlist.desc is defined and intlist.desc %}
+  description {{ intlist.desc }}
+{% endif %}
+  ip address {{ intlist.ip }} {{ intlist.mask }}
+  no shutdown
+{% endfor %}

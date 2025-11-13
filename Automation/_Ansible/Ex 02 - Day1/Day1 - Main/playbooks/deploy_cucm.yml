@@ -1,0 +1,55 @@
+- name: Configuring Host Settings
+  tags: host
+  cisco.ios.ios_config:
+    src: '../templates/hesno.j2'
+
+- name: Configuring Interfaces
+  tags: int
+  cisco.ios.ios_config:
+    src: '../templates/interfaces.j2'
+
+- name: Configuring Analog Phones
+  tags: analog
+  cisco.ios.ios_config:
+    src: '../templates/analog_phones.j2'
+
+- name: Configuring Telephony
+  tags: telephony
+  cisco.ios.ios_config:
+    src: '../templates/telephony.j2'
+
+- name: Registering Ephones
+  tags: ephones
+  cisco.ios.ios_config:
+    src: '../templates/telephony_ephones.j2'
+
+- name: Enabling Video Calls
+  tags: video
+  cisco.ios.ios_config:
+    src: '../templates/video_calls.j2'
+
+- name: Allowing Incoming Calls
+  tags: incoming
+  cisco.ios.ios_config:
+    src: '../templates/incoming_calls.j2'
+
+- name: Allowing Outgoing Calls
+  tags: outgoing
+  cisco.ios.ios_config:
+    src: '../templates/outgoing_calls.j2'
+
+- name: Configuring Routing
+  tags: ospf
+  cisco.ios.ios_config:
+    src: '../templates/ospf.j2'
+
+- name: Enabling IVRS
+  tags: ivrs
+  cisco.ios.ios_config:
+    src: '../templates/ivrs.j2'
+
+- name: Generating Ephone Configuration Files
+  tags: cnf_files
+  cisco.ios.ios_config:
+
+    src: '../templates/cnf_files.j2'

@@ -1,0 +1,10 @@
+{% for process in ospf %}
+ip routing
+router ospf {{ process.id }}
+{% if process.router_id is defined and process.router_id %}
+  router-id {{ process.router_id }}
+{% endif %}
+{% for advert in process.networks %}
+  network {{ advert.network }} {{ advert.wild_mask }} area {{ advert.area }}
+{% endfor %}
+{% endfor %}

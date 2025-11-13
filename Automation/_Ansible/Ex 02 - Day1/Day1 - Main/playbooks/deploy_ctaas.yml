@@ -1,0 +1,14 @@
+- name: Configuring Host Settings
+  tags: host
+  cisco.ios.ios_config:
+    src: '../templates/hesno.j2'
+
+- name: Configuring Interfaces
+  tags: int
+  cisco.ios.ios_config:
+    src: '../templates/interfaces.j2'
+
+- name: Configuring VLANs
+  tags: vlans
+  cisco.ios.ios_config:
+    src: '../templates/vlans.j2'

@@ -1,0 +1,9 @@
+{% for ephone in ephones %}
+ephone {{ ephone.id }}
+mac-address {{ ephone.mac }}
+type {{ ephone.type }}
+button {{ ephone.buttons }}
+{% if ephone.restart is defined and ephone.restart %}
+restart
+{% endif %}
+{% endfor %}
